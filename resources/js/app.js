@@ -19,6 +19,9 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.config.productionTip = false
+export const bus = new Vue();
+
 Vue.component('categorias-component', require('./components/CategoriasComponent.vue').default);
 Vue.component('productos-component', require('./components/ProductosComponent.vue').default);
 
@@ -31,3 +34,5 @@ Vue.component('productos-component', require('./components/ProductosComponent.vu
 const app = new Vue({
     el: '#app',
 });
+
+

@@ -23,6 +23,9 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+
+// *********
+
 Route::get('/categorias', 'CategoriaController@index');
 
 Route::put('/categorias/actualizar', 'CategoriaController@update');
@@ -32,3 +35,15 @@ Route::post('/categorias/guardar', 'CategoriaController@store');
 Route::delete('/categorias/borrar/{id}', 'CategoriaController@destroy');
 
 Route::get('/categorias/buscar', 'CategoriaController@show');
+
+// *********
+
+Route::get('/productos', 'ProductoController@index');
+
+Route::put('/productos/actualizar', 'ProductoController@update');
+
+Route::post('/productos/guardar', 'ProductoController@store');
+
+Route::delete('/productos/borrar/{id}', 'ProductoController@destroy');
+
+Route::get('/productos/buscar', 'ProductoController@show');

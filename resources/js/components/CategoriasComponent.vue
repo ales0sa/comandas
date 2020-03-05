@@ -44,7 +44,9 @@
 </template>
 
 <script>
+import { bus } from '../app'
     export default {
+        name: 'A',
         data(){
             return{
                 nombre:"", //Esta variable, mediante v-model esta relacionada con el input del formulario
@@ -74,6 +76,9 @@
                     'nombre':this.nombre,
                 }).then(function (response) {
                     me.getTasks();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
+                    //this.getCategorias();
+                    bus.$emit('changeIt', 'actualizar cats');
+
                     me.clearFields();//Limpiamos los campos e inicializamos la variable update a 0
                 })
                 .catch(function (error) {
@@ -89,6 +94,7 @@
                     'nombre':this.nombre,
                 }).then(function (response) {
                    me.getTasks();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
+                   bus.$emit('changeIt', 'actualizar cats');
                    me.clearFields();//Limpiamos los campos e inicializamos la variable update a 0
                 })
                 .catch(function (error) {
@@ -115,6 +121,7 @@
                     axios.delete('/categorias/borrar/'+task_id
                     ).then(function (response) {
                         me.getTasks();
+                        bus.$emit('changeIt', 'actualizar cats');
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -128,6 +135,7 @@
         },
         mounted() {
            this.getTasks(); 
+
         }
     }
 </script>
