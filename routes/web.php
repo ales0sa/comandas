@@ -40,7 +40,7 @@ Route::get('/categorias/buscar', 'CategoriaController@show');
 
 Route::get('/productos', 'ProductoController@index');
 
-Route::put('/productos/actualizar', 'ProductoController@update');
+Route::post('/productos/actualizar', 'ProductoController@update');
 
 Route::post('/productos/guardar', 'ProductoController@store');
 

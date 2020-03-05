@@ -29,6 +29,20 @@ class ProductoController extends Controller
         $prod->descripcion = $request->descripcion;
         $prod->categoria_id = $request->categoria;
         $prod->user_id = Auth::id();
+
+
+        if ($request->hasFile('image')) {
+        $imageName = time().'.'.$request->image->getClientOriginalExtension();
+        $request->image->move(public_path('images'), $imageName);
+        }else{
+        $imageName = "no-photo.png";
+        }
+
+
+        //echo $request->image;
+
+        $prod->foto = $imageName;
+
         $prod->save();
         //Esta función guardará las tareas que enviaremos mediante vuejs
     }
@@ -47,7 +61,15 @@ class ProductoController extends Controller
         $prod->precio = $request->precio;
         $prod->descripcion = $request->descripcion;
         $prod->categoria_id = $request->categoria;
-        
+
+        if ($request->hasFile('image')) {
+        $imageName = time().'.'.$request->image->getClientOriginalExtension();
+        $request->image->move(public_path('images'), $imageName);
+        $prod->foto = $imageName;
+        }else{
+        //$imageName = "no-photo.png";
+        }
+
         $prod->save();
 
         return $prod;

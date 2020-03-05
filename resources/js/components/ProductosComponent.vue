@@ -7,6 +7,7 @@
                         <thead>
                             <tr>
                             	<th scope="col"></th>
+                            	<th scope="col"></th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">$</th>
                                 <th scope="col">Acciones</th>
@@ -16,6 +17,7 @@
 
                             <tr v-for="prod in arrayProductos" :key="prod.id"> <!--Recorremos el array y cargamos nuestra tabla-->
                             	<td v-text="prod.categoria_id"></td>
+                            	<td> <img :src="'images/' + prod.foto" width="150px">  </td>
                                 <td v-text="prod.nombre"></td>
                                 <td v-text="prod.precio"></td>
                                 <td>
@@ -39,7 +41,12 @@
                     <input v-model="descripcion" type="text" class="form-control">
 
                 </div>
-                <div class="form-group"><!-- Formulario para la creación o modificación de nuestras tareas-->
+                <div class="form-group">
+                    <label>Foto</label>
+                    <input type="file" class="form-control" v-on:change="onImageChange">
+
+                </div>
+                <div class="form-group">
                     <label>Categoria</label>
 
                       <select class="form-control" v-model="categoria">
@@ -79,6 +86,7 @@ import {bus} from "../app";
                 nombre:"",
                 descripcion:"",
                 categoria:"",
+                image:"",
                 precio:"", //Esta variable, mediante v-model esta relacionada con el input del formulario
                 update:0, /*Esta variable contrarolará cuando es una nueva tarea o una modificación, si es 0 significará que no hemos seleccionado
                           ninguna tarea, pero si es diferente de 0 entonces tendrá el id de la tarea y no mostrará el boton guardar sino el modificar*/
@@ -87,6 +95,10 @@ import {bus} from "../app";
             }
         },
         methods:{
+        	onImageChange(e){
+                console.log(e.target.files[0]);
+                this.image = e.target.files[0];
+            },
         	getCategorias(){
                 let me =this;
                 let url = '/categorias' //Ruta que hemos creado para que nos devuelva todas las tareas
@@ -116,12 +128,28 @@ import {bus} from "../app";
             crearProducto(){
                 let me =this;
                 let url = '/productos/guardar' //Ruta que hemos creado para enviar una tarea y guardarla
-                axios.post(url,{ //estas variables son las que enviaremos para que crear la tarea
+                const config = {
+                    headers: { 'content-type': 'multipart/form-data' }
+                }
+
+                let formData = new FormData();
+                formData.append('image', this.image);
+
+                formData.append('nombre', this.nombre);
+                formData.append('descripcion', this.descripcion);
+                formData.append('categoria', this.categoria);
+                formData.append('precio', this.precio);
+
+                /*{ //estas variables son las que enviaremos para que crear la tarea
                     'nombre':this.nombre,
                     'descripcion':this.descripcion,
                     'categoria':this.categoria,
                     'precio':this.precio,
-                }).then(function (response) {
+                    'image':this.image,
+                }
+                */
+                axios.post(url, formData ,config)
+            .then(function (response) {
                     me.getProducts();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
                     me.clearFields();//Limpiamos los campos e inicializamos la variable update a 0
                 })
@@ -133,13 +161,19 @@ import {bus} from "../app";
             updateTasks(){/*Esta funcion, es igual que la anterior, solo que tambien envia la variable update que contiene el id de la
                 tarea que queremos modificar*/
                 let me = this;
-                axios.put('/productos/actualizar',{
-                    'id':this.update,
-                    'nombre':this.nombre,
-                    'precio':this.precio,
-                    'descripcion':this.descripcion,
-                    'categoria':this.categoria,
-                }).then(function (response) {
+                const config = {
+                    headers: { 'content-type': 'multipart/form-data' }
+                }
+
+                let formData = new FormData();
+                formData.append('image', this.image);
+                formData.append('id', this.update);
+                formData.append('nombre', this.nombre);
+                formData.append('descripcion', this.descripcion);
+                formData.append('categoria', this.categoria);
+                formData.append('precio', this.precio);
+
+                axios.post('/productos/actualizar',formData, config).then(function (response) {
                    me.getProducts();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
                    me.clearFields();//Limpiamos los campos e inicializamos la variable update a 0
                 })
@@ -167,7 +201,7 @@ import {bus} from "../app";
                 let me =this;
                 let task_id = data.id
                 if (confirm('¿Seguro que deseas borrar este producto?')) {
-                    axios.delete('/categorias/borrar/'+task_id
+                    axios.delete('/productos/borrar/'+task_id
                     ).then(function (response) {
                         me.getProducts();
                     })
