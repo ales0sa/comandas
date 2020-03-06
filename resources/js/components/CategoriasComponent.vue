@@ -1,7 +1,7 @@
 <template>
     <div class="container container-task">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <h2>Lista de categorias</h2>
                 <table class="table text-center"><!--Creamos una tabla que mostrará todas las tareas-->
                         <thead>
@@ -16,16 +16,17 @@
                                 <td v-text="cat.nombre"></td>
                                 <td>
                                     <!--Botón modificar, que carga los datos del formulario con la tarea seleccionada-->
-                                    <button class="btn" @click="loadFieldsUpdate(cat)">Modificar</button>
+                                    <button class="btn btn btn-warning" @click="loadFieldsUpdate(cat)">Modificar</button>
                                     <!--Botón que borra la tarea que seleccionemos-->
-                                    <button class="btn" @click="deleteTask(cat)">Borrar</button>
+                                    <button class="btn btn btn-danger" @click="deleteTask(cat)">Borrar</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4 border-left">
                 <div class="form-group"><!-- Formulario para la creación o modificación de nuestras tareas-->
+                <h3>Crear Categoría</h3>
                     <label>Nombre</label>
                     <input v-model="nombre" type="text" class="form-control">
 
@@ -40,7 +41,9 @@
                 </div>
             </div>
         </div>
+        <div style="padding-bottom:40px;"></div>
     </div>
+
 </template>
 
 <script>

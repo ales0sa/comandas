@@ -25,6 +25,7 @@ export const bus = new Vue();
 Vue.component('categorias-component', require('./components/CategoriasComponent.vue').default);
 Vue.component('productos-component', require('./components/ProductosComponent.vue').default);
 
+Vue.component('qrscanner-component', require('./components/QrScannerComponent.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

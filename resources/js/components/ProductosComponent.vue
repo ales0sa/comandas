@@ -1,9 +1,15 @@
 <template>
+	    <div class="vld-parent">
+        <loading :active.sync="isLoading" 
+        :can-cancel="true" 
+        :on-cancel="onCancel"
+        :is-full-page="fullPage"></loading>
+
     <div class="container container-task">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-8 boder-left">
                 <h2>Lista de productos</h2>
-                <table class="table text-center"><!--Creamos una tabla que mostrará todas las tareas-->
+                <table class="table table-responsive text-center"><!--Creamos una tabla que mostrará todas las tareas-->
                         <thead>
                             <tr>
                             	<th scope="col"></th>
@@ -16,8 +22,8 @@
                         <tbody>
 
                             <tr v-for="prod in arrayProductos" :key="prod.id"> <!--Recorremos el array y cargamos nuestra tabla-->
-                            	<td v-text="prod.categoria_id"></td>
-                            	<td> <img :src="'images/' + prod.foto" width="150px">  </td>
+                            	<td v-text="prod.catname"></td>
+                            	<td> <img :src="'images/' + prod.foto" width="100px" class="imgproducto">  </td>
                                 <td v-text="prod.nombre"></td>
                                 <td v-text="prod.precio"></td>
                                 <td>
@@ -30,8 +36,15 @@
                         </tbody>
                     </table>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 border-left">
+
+            <!--- <div v-if="loading"><div class="spinner-border" role="status">
+  <span class="sr-only">Cargando...</span>
+</div></div> 
+
+            <div v-else>--->
                 <div class="form-group"><!-- Formulario para la creación o modificación de nuestras tareas-->
+                <h3>Crear o Modificar Productos</h3>
                     <label>Nombre</label>
                     <input v-model="nombre" type="text" class="form-control">
 
@@ -43,7 +56,7 @@
                 </div>
                 <div class="form-group">
                     <label>Foto</label>
-                    <input type="file" class="form-control" v-on:change="onImageChange">
+                    <input type="file" class="form-control" v-on:change="onImageChange" ref="myFileInput">
 
                 </div>
                 <div class="form-group">
@@ -72,17 +85,29 @@
                     <button v-if="update != 0" @click="clearFields()" class="btn">Atrás</button>
                 </div>
             </div>
+            <!--- </div> --->
         </div>
     </div>
+
+</div>
+
 </template>
 
 <script>
 import {bus} from "../app";
 
+    // Import component
+    import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+    import 'vue-loading-overlay/dist/vue-loading.css';
+
+    
+
     export default {
     	name: 'B',
         data(){
             return{
+            	isLoading: true,
                 nombre:"",
                 descripcion:"",
                 categoria:"",
@@ -92,9 +117,17 @@ import {bus} from "../app";
                           ninguna tarea, pero si es diferente de 0 entonces tendrá el id de la tarea y no mostrará el boton guardar sino el modificar*/
                 arrayProductos:[], //Este array contendrá las tareas de nuestra bd
                 arrayCategorias:[],
+            fullPage: true
             }
         },
+        components: {
+            Loading
+        },
         methods:{
+
+            onCancel() {
+              console.log('User cancelled the loader.')
+            },
         	onImageChange(e){
                 console.log(e.target.files[0]);
                 this.image = e.target.files[0];
@@ -123,7 +156,7 @@ import {bus} from "../app";
                 .catch(function (error) {
                     // handle error
                     console.log(error);
-                });
+                }).finally(() => this.isLoading = false );
             },
             crearProducto(){
                 let me =this;
@@ -148,6 +181,9 @@ import {bus} from "../app";
                     'image':this.image,
                 }
                 */
+
+                this.isLoading = true;
+
                 axios.post(url, formData ,config)
             .then(function (response) {
                     me.getProducts();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
@@ -173,6 +209,8 @@ import {bus} from "../app";
                 formData.append('categoria', this.categoria);
                 formData.append('precio', this.precio);
 
+                this.isLoading = true;
+
                 axios.post('/productos/actualizar',formData, config).then(function (response) {
                    me.getProducts();//llamamos al metodo getTask(); para que refresque nuestro array y muestro los nuevos datos
                    me.clearFields();//Limpiamos los campos e inicializamos la variable update a 0
@@ -182,8 +220,10 @@ import {bus} from "../app";
                 });
             },
             loadFieldsUpdate(data){ //Esta función rellena los campos y la variable update, con la tarea que queremos modificar
+
                 this.update = data.id
                 let me =this;
+
                 let url = '/productos/buscar?id='+this.update;
                 axios.get(url).then(function (response) {
                     me.nombre= response.data.nombre;
@@ -215,7 +255,12 @@ import {bus} from "../app";
                 this.categoria = "";
                 this.descripcion = "";
                 this.precio = "";
+                //this.image = "";
+                //fileInput.file = null;
+                this.$refs.myFileInput.value = '';
+
                 this.update = 0;
+
             }
         },
         mounted() {

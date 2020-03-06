@@ -12,7 +12,10 @@ class ProductoController extends Controller
     public function index(Request $request)
     {
         $useron = Auth::id();
-        $prods = Producto::where('user_id', $useron)->get();
+        $prods = Producto::select('productos.*', 'categorias.nombre AS catname')
+                ->where('productos.user_id', $useron)
+                ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+                ->get();
 
         //return response()->json(['cats'=>$cats]);
         return $prods;
