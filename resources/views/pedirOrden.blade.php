@@ -1,3 +1,6 @@
+Negocio : {{ $negocioname }}
+
+<br>
 Tu mesa es la n° {{ $mesucha }}
 
 <br>
