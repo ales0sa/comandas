@@ -15,6 +15,7 @@ class ProductoController extends Controller
         $prods = Producto::select('productos.*', 'categorias.nombre AS catname')
                 ->where('productos.user_id', $useron)
                 ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+                ->orderBy('catname')
                 ->get();
 
         //return response()->json(['cats'=>$cats]);
